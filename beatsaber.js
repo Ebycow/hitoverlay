@@ -5,12 +5,21 @@ const events = {
         ui.onGameConnected(data);
     },
     noteCut(data, fullStatus){
-            ui.noteCut(data, fullStatus);
+        ui.noteCut(data, fullStatus);
 
     },
     songStart(data) {
+        ui.gridShow(data);
+
+        
+    },
+    finished(data) {
+        ui.gridHide(data);
 
     },
+    failed(data){
+        ui.gridHide(data);
+    }
 };
 
 function connect(){
@@ -18,7 +27,7 @@ function connect(){
     socket.onmessage = (message) => {
         const json = JSON.parse(message.data);
 
-        if(["hello", "noteCut", "songStart"].some(a => a=== json.event)) {
+        if(["hello", "noteCut", "songStart", "finished", "failed"].some(a => a=== json.event)) {
             events[json.event](json.status, json);
         }
     };

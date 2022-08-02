@@ -85,6 +85,18 @@ const ui = {
                 }
             }, 100);
     },
+    gridShow(){
+        const grid = document.getElementsByClassName("Grid");
+        if(grid.length){
+            grid[0].style.setProperty("opacity",  `100`);
+        }
+    },
+    gridHide(){
+        const grid = document.getElementsByClassName("Grid");
+        if(grid.length){
+            grid[0].style.setProperty("opacity",  `0`);
+        }
+    },
 
     getDirectionValue(direction){
         switch(direction){
