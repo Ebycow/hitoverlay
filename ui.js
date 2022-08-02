@@ -11,6 +11,7 @@ const ui = {
     noteCut(data, fullStatus){
         let bloq = document.createElement("img");
         let hitLine = document.createElement("img");
+        let score = document.createElement("div")
 
         if(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
             ui.deleteNote(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
@@ -48,24 +49,35 @@ const ui = {
             }
         }
 
+        score.innerText = fullStatus.noteCut.initialScore;
+
         bloq.classList.add("Note");
         bloq.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
         bloq.classList.add(`Line${fullStatus.noteCut.noteLine}`);
         bloq.classList.add(fullStatus.noteCut.noteCutDirection);
         bloq.style.setProperty("--fadeTime",  `${fadeTime}ms`);
 
+        score.classList.add("Score");
+        score.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
+        score.classList.add(`Line${fullStatus.noteCut.noteLine}`);
+        score.style.setProperty("--fadeTime",  `${fadeTime}ms`);
+
         document.body.appendChild(bloq);
         document.body.appendChild(hitLine);
+        document.body.appendChild(score);
 
         hitLine.style.setProperty("transform", `rotate(${-fullStatus.noteCut.cutDirectionDeviation + ui.getDirectionValue(fullStatus.noteCut.noteCutDirection)}deg)`);
         hitLine.style.setProperty("--fadeTime", `${fadeTime + 100}ms`);
 
         console.log(`${fadeTime + 100}ms`);
-        setTimeout(function(){ui.deleteNote(bloq, hitLine);}, fadeTime);
+        setTimeout(function(){ui.deleteNote(bloq, hitLine, score);}, fadeTime);
     },
-    deleteNote(note, line){
+    deleteNote(note, line, score){
         if(document.body.contains(note)){
             document.body.removeChild(note);
+        }
+        if(document.body.contains(score)){
+            document.body.removeChild(score);
         }
         if(line) setTimeout(function(){
                 if(document.body.contains(line)){
