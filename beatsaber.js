@@ -8,16 +8,23 @@ const events = {
         ui.noteCut(data, fullStatus);
 
     },
-    songStart(data) {
+    songStart(data, fullStatus) {
         ui.gridShow(data);
+        ui.onSongStart(data, fullStatus)
 
         
+    },
+    resume(data) {
+        ui.gridShow(data);
     },
     finished(data) {
         ui.gridHide(data);
 
     },
     failed(data){
+        ui.gridHide(data);
+    },
+    pause(data){
         ui.gridHide(data);
     }
 };
@@ -27,7 +34,7 @@ function connect(){
     socket.onmessage = (message) => {
         const json = JSON.parse(message.data);
 
-        if(["hello", "noteCut", "songStart", "finished", "failed"].some(a => a=== json.event)) {
+        if(["hello", "noteCut", "songStart", "finished", "failed", "pause", "resume"].some(a => a=== json.event)) {
             events[json.event](json.status, json);
         }
     };

@@ -2,13 +2,21 @@ const ui = {
     var : fadeTime = parseInt(new URLSearchParams(window.location.search).get("fadeTime") || "500"),
     var : showStrict = parseInt(new URLSearchParams(window.location.search).get("showStrict") || "0"),
     var : showGrid = parseInt(new URLSearchParams(window.location.search).get("showGrid") || "1"),
+    bloqColor : [[255, 0 , 0], [0, 0, 255]],
     onGameConnected(data){
         console.log("Connected to Beat Saber v" + data.game.gameVersion);
         if(showGrid == "0"){
             document.getElementsByTagName("Grid")[0].remove();
         }
     },
+    onSongStart(data, fullStatus){
+        // console.log(fullStatus);
+        ui.bloqColor[0] = fullStatus.status.beatmap.color.saberA;
+        ui.bloqColor[1] = fullStatus.status.beatmap.color.saberB;
+    },
+
     noteCut(data, fullStatus){
+
         let bloq = document.createElement("img");
         let hitLine = document.createElement("img");
         let score = document.createElement("div")
@@ -27,13 +35,18 @@ const ui = {
         hitLine.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
         hitLine.classList.add(`Line${fullStatus.noteCut.noteLine}`);
 
+        let hsv = []
         if(fullStatus.noteCut.noteCutDirection == "Any"){
             switch(fullStatus.noteCut.saberType){
                 case "SaberA":
-                    bloq.src = "images/RBloqDot.png";
+                    bloq.src = "images/BloqDot.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[0]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
                 case "SaberB":
-                    bloq.src = "images/BBloqDot.png";
+                    bloq.src = "images/BloqDot.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[1]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
             }
 
@@ -41,13 +54,21 @@ const ui = {
         } else {
             switch(fullStatus.noteCut.saberType){
                 case "SaberA":
-                    bloq.src = "images/RBloq.png";
+                    bloq.src = "images/Bloq.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[0]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
                 case "SaberB":
-                    bloq.src = "images/BBloq.png";
+                    bloq.src = "images/Bloq.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[1]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
             }
+
+            console.log(hsv);
         }
+
+        
 
         score.innerText = fullStatus.noteCut.initialScore;
 
@@ -109,5 +130,40 @@ const ui = {
             case "Left" : return 270;
             case "UpLeft": return 315;
         }
+    },
+
+    rgb2hsv ( rgb ) {
+        var r = rgb[0] / 255 ;
+        var g = rgb[1] / 255 ;
+        var b = rgb[2] / 255 ;
+
+        var max = Math.max( r, g, b ) ;
+        var min = Math.min( r, g, b ) ;
+        var diff = max - min ;
+
+        var h = 0 ;
+
+        switch( min ) {
+            case max :
+                h = 0 ;
+            break ;
+
+            case r :
+                h = (60 * ((b - g) / diff)) + 180 ;
+            break ;
+
+            case g :
+                h = (60 * ((r - b) / diff)) + 300 ;
+            break ;
+
+            case b :
+                h = (60 * ((g - r) / diff)) + 60 ;
+            break ;
+        }
+
+        var s = max == 0 ? 0 : diff / max ;
+        var v = max ;
+
+        return [ h, s, v ] ;
     }
 };
