@@ -25,6 +25,10 @@ const ui = {
             ui.deleteNote(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
         }
 
+        if(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
+            ui.deleteNote(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
+        }
+
         if((fullStatus.noteCut.cutDirectionDeviation > -15 && fullStatus.noteCut.cutDirectionDeviation < 15) && showStrict == 1) {
             hitLine.src = "images/HitGood.png";
         } else {
