@@ -17,27 +17,9 @@ const ui = {
 
     noteCut(data, fullStatus){
 
+    },
+    noteSpawned(data, fullStatus) {
         let bloq = document.createElement("img");
-        let hitLine = document.createElement("img");
-        let score = document.createElement("div")
-
-        if(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
-            ui.deleteNote(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
-        }
-
-        if(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
-            ui.deleteNote(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
-        }
-
-        if((fullStatus.noteCut.cutDirectionDeviation > -15 && fullStatus.noteCut.cutDirectionDeviation < 15) && showStrict == 1) {
-            hitLine.src = "images/HitGood.png";
-        } else {
-            hitLine.src = "images/Hit.png";
-        }
-
-        hitLine.classList.add("HitLine");
-        hitLine.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
-        hitLine.classList.add(`Line${fullStatus.noteCut.noteLine}`);
 
         let hsv = []
         if(fullStatus.noteCut.noteCutDirection == "Any"){
@@ -72,9 +54,6 @@ const ui = {
             console.log(hsv);
         }
 
-        
-
-        score.innerText = fullStatus.noteCut.initialScore;
 
         bloq.classList.add("Note");
         bloq.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
@@ -82,33 +61,77 @@ const ui = {
         bloq.classList.add(fullStatus.noteCut.noteCutDirection);
         bloq.style.setProperty("--fadeTime",  `${fadeTime}ms`);
 
-        score.classList.add("Score");
-        score.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
-        score.classList.add(`Line${fullStatus.noteCut.noteLine}`);
-        score.style.setProperty("--fadeTime",  `${fadeTime}ms`);
 
         document.body.appendChild(bloq);
+
+        setTimeout(function(){ui.deleteNote(bloq);}, fadeTime);
+    },
+    deleteNote(note){
+        if(document.body.contains(note)){
+            document.body.removeChild(note);
+        }
+
+    },
+
+    noteFullyCut(data, fullStatus) {
+
+        
+        let hitLine = document.createElement("img");
+        
+
+        if(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
+            ui.deleteNote(document.getElementsByClassName(`HitLine Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
+        }
+
+        if((fullStatus.noteCut.cutDirectionDeviation > -15 && fullStatus.noteCut.cutDirectionDeviation < 15) && showStrict == 1) {
+            hitLine.src = "images/HitGood.png";
+        } else {
+            hitLine.src = "images/Hit.png";
+        }
+
+        hitLine.classList.add("HitLine");
+        hitLine.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
+        hitLine.classList.add(`Line${fullStatus.noteCut.noteLine}`);
+
+        
         document.body.appendChild(hitLine);
-        document.body.appendChild(score);
+        
 
         hitLine.style.setProperty("transform", `rotate(${-fullStatus.noteCut.cutDirectionDeviation + ui.getDirectionValue(fullStatus.noteCut.noteCutDirection)}deg)`);
         hitLine.style.setProperty("--fadeTime", `${fadeTime + 100}ms`);
 
         console.log(`${fadeTime + 100}ms`);
-        setTimeout(function(){ui.deleteNote(bloq, hitLine, score);}, fadeTime);
-    },
-    deleteNote(note, line, score){
-        if(document.body.contains(note)){
-            document.body.removeChild(note);
+        setTimeout(function(){ui.deleteHitLine(hitLine);}, fadeTime);
+
+        // score display
+        if(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]){
+            ui.deleteNote(document.getElementsByClassName(`Score Layer${fullStatus.noteCut.noteLayer} Line${fullStatus.noteCut.noteLine}`)[0]);
         }
+
+        let score = document.createElement("div");
+        score.innerText = fullStatus.noteCut.finalScore;
+
+        score.classList.add("Score");
+        score.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
+        score.classList.add(`Line${fullStatus.noteCut.noteLine}`);
+        score.style.setProperty("--fadeTime",  `${fadeTime}ms`);
+
+        document.body.appendChild(score);
+        
+        setTimeout(function(){ui.deleteScore(score);}, fadeTime);
+        
+    },
+    deleteScore(score){
         if(document.body.contains(score)){
             document.body.removeChild(score);
         }
-        if(line) setTimeout(function(){
-                if(document.body.contains(line)){
-                    document.body.removeChild(line);
-                }
-            }, 100);
+    },
+    deleteHitLine(hitLine){
+        setTimeout(function(){
+            if(document.body.contains(line)){
+                document.body.removeChild(line);
+            }
+        }, 100);
     },
     gridShow(){
         const grid = document.getElementsByClassName("Grid");
@@ -122,7 +145,6 @@ const ui = {
             grid[0].style.setProperty("opacity",  `0`);
         }
     },
-
     getDirectionValue(direction){
         switch(direction){
             case "Up": return 0;
