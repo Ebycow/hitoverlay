@@ -18,33 +18,34 @@ const ui = {
     noteCut(data, fullStatus){
 
     },
-    noteSpawned(data, fullStatus) {
+    noteMissed(data, fullStatus) {
         let bloq = document.createElement("img");
+
+        console.log(fullStatus.noteCut)
 
         let hsv = []
         if(fullStatus.noteCut.noteCutDirection == "Any"){
-            switch(fullStatus.noteCut.saberType){
-                case "SaberA":
+            switch(fullStatus.noteCut.noteType){
+                case "NoteA":
                     bloq.src = "images/BloqDot.png";
                     hsv = ui.rgb2hsv(ui.bloqColor[0]);
                     bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
-                case "SaberB":
+                case "NoteB":
                     bloq.src = "images/BloqDot.png";
                     hsv = ui.rgb2hsv(ui.bloqColor[1]);
                     bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
             }
 
-            hitLine.style.setProperty("display", "none");
         } else {
-            switch(fullStatus.noteCut.saberType){
-                case "SaberA":
+            switch(fullStatus.noteCut.noteType){
+                case "NoteA":
                     bloq.src = "images/Bloq.png";
                     hsv = ui.rgb2hsv(ui.bloqColor[0]);
                     bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
                     break;
-                case "SaberB":
+                case "NoteB":
                     bloq.src = "images/Bloq.png";
                     hsv = ui.rgb2hsv(ui.bloqColor[1]);
                     bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
@@ -65,6 +66,7 @@ const ui = {
         document.body.appendChild(bloq);
 
         setTimeout(function(){ui.deleteNote(bloq);}, fadeTime);
+
     },
     deleteNote(note){
         if(document.body.contains(note)){
@@ -74,7 +76,53 @@ const ui = {
     },
 
     noteFullyCut(data, fullStatus) {
+        let bloq = document.createElement("img");
 
+        console.log(fullStatus.noteCut)
+
+        let hsv = []
+        if(fullStatus.noteCut.noteCutDirection == "Any"){
+            switch(fullStatus.noteCut.noteType){
+                case "NoteA":
+                    bloq.src = "images/BloqDot.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[0]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
+                    break;
+                case "NoteB":
+                    bloq.src = "images/BloqDot.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[1]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
+                    break;
+            }
+
+        } else {
+            switch(fullStatus.noteCut.noteType){
+                case "NoteA":
+                    bloq.src = "images/Bloq.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[0]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
+                    break;
+                case "NoteB":
+                    bloq.src = "images/Bloq.png";
+                    hsv = ui.rgb2hsv(ui.bloqColor[1]);
+                    bloq.style.setProperty("filter" , `hue-rotate(${ hsv[0] }deg) saturate(${ hsv[1] * 100 }%) brightness(${ hsv[2] * 100 }%)`);
+                    break;
+            }
+
+            console.log(hsv);
+        }
+
+
+        bloq.classList.add("Note");
+        bloq.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
+        bloq.classList.add(`Line${fullStatus.noteCut.noteLine}`);
+        bloq.classList.add(fullStatus.noteCut.noteCutDirection);
+        bloq.style.setProperty("--fadeTime",  `${fadeTime}ms`);
+
+
+        document.body.appendChild(bloq);
+
+        setTimeout(function(){ui.deleteNote(bloq);}, fadeTime);
         
         let hitLine = document.createElement("img");
         
@@ -93,9 +141,9 @@ const ui = {
         hitLine.classList.add(`Layer${fullStatus.noteCut.noteLayer}`);
         hitLine.classList.add(`Line${fullStatus.noteCut.noteLine}`);
 
-        
-        document.body.appendChild(hitLine);
-        
+        if(fullStatus.noteCut.noteCutDirection != "Any"){
+            document.body.appendChild(hitLine);
+        }
 
         hitLine.style.setProperty("transform", `rotate(${-fullStatus.noteCut.cutDirectionDeviation + ui.getDirectionValue(fullStatus.noteCut.noteCutDirection)}deg)`);
         hitLine.style.setProperty("--fadeTime", `${fadeTime + 100}ms`);
@@ -128,8 +176,8 @@ const ui = {
     },
     deleteHitLine(hitLine){
         setTimeout(function(){
-            if(document.body.contains(line)){
-                document.body.removeChild(line);
+            if(document.body.contains(hitLine)){
+                document.body.removeChild(hitLine);
             }
         }, 100);
     },

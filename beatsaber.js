@@ -11,8 +11,8 @@ const events = {
     noteFullyCut(data, fullStatus){
         ui.noteFullyCut(data, fullStatus);
     },
-    noteSpawned(data, fullStatus){
-        ui.noteSpawned(data, fullStatus);
+    noteMissed(data, fullStatus){
+        ui.noteMissed(data, fullStatus);
     },
     songStart(data, fullStatus) {
         ui.gridShow(data);
@@ -41,7 +41,7 @@ function connect(){
     socket.onmessage = (message) => {
         const json = JSON.parse(message.data);
 
-        if(["hello", "noteCut", "songStart", "finished", "failed", "pause", "resume","noteFullyCut", "noteSpawned"].some(a => a=== json.event)) {
+        if(["hello", "noteCut", "songStart", "finished", "failed", "pause", "resume","noteFullyCut", "noteMissed"].some(a => a=== json.event)) {
             events[json.event](json.status, json);
         }
     };
